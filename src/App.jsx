@@ -4,53 +4,81 @@ import {Button, Navbar, Container, Nav} from 'react-bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import { myImages } from './data/data.js';
-
+import { Routes, Route, Link, useNavigate, Outlet} from 'react-router-dom';
+import Detail from './pages/Detail.jsx';
 
 
 function App() {
 
+  let navigate = useNavigate();
+
   return (
     <>
       <div className='App'>
-          <div>
-            <Navbar bg="dark" variant="dark">
-              <Container>
+          <Navbar bg="dark" variant="dark">
+            <Container>
               <Navbar.Brand href="#home">Shoes Shop</Navbar.Brand>
               <Nav className="me-auto">
-                <Nav.Link href="#home">Home</Nav.Link>
-                <Nav.Link href="#features">Features</Nav.Link>
-                <Nav.Link href="#pricing">Pricing</Nav.Link>
+                  <Nav.Link onClick={()=> { navigate('/'); }}>Home</Nav.Link>
+                  <Nav.Link onClick={()=> { navigate('/detail/0'); }}>Cart</Nav.Link>
               </Nav>
-              </Container>
-            </Navbar>
+            </Container>
+          </Navbar>
+     
 
-            <div className='main-bg'></div>
 
-            <div className="container">
-              <div className="row">             
-                   {
-                    myImages.map((image) => (
-                        <div className="col-md-4" key={image.id}>
-                          <img src={image.src} width="100%" alt={image.title} />
-                          <h4>{image.title}</h4>
-                          <p>
-                            {image.content}
-                          </p>
-                           <p>
-                            {image.price}
-                          </p>
-                        </div>
-                      ))
-                    }
+          <Routes>
+            <Route path="/" element={
+              <div>
+                <div className='main-bg'></div>
+                <div className="container">
+                  <div className="row">             
+                      {
+                          myImages.map((image) => {
+                            return <Card image={image} key={image.id}  />;
+                          })
+                        }
+                  </div>
+                </div> 
               </div>
-            </div> 
+            } />
+            <Route path="/detail/:id" element={
+              <div className="container">
+                  <Detail myImages={myImages} />                  
+              </div> 
+            } />
+            <Route path="*" element={
+              <div>404 없는 페이지 입니다.</div>
+            } />
+          </Routes>
 
-
-
-
+          <div>
           </div>
       </div>
     </>
+  )
+}
+
+
+
+function Card({image}){ //props 대신 중괄호를 사용해 바로 변수를 꺼내 쓸 수 있음
+
+  // props.image.title 대신 바로 title로 접근 가능
+  const { src, title, content, price } = image;
+
+  return (
+    <div className="col-md-4">
+      <Link to={`/detail/${image.id}`}>
+        <img src={src} width="100%" alt={title} />
+      </Link>
+      <strong>{title}</strong>
+      <p>
+        {content}
+      </p>
+      <p>
+        {price}
+      </p>
+    </div>
   )
 }
 
